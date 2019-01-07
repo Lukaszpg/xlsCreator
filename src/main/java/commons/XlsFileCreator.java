@@ -41,7 +41,7 @@ public class XlsFileCreator<T> {
         CellStyle headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFont(headerFont);
 
-        //kolekja nazw kolumn w arkuszu
+        //kolekcja nazw kolumn w arkuszu
         List<String> columnsTitles = new ArrayList<>();
 
         //iteracja po klasie przekazanej do pola 'clazz'. Odczytuję wszystkie zadeklarowane pola.
@@ -61,9 +61,9 @@ public class XlsFileCreator<T> {
         columnsTitles.forEach(t -> System.out.println("get" + t.substring(0, 1).toUpperCase() + t.substring(1)));
 
         //zapis danych i wywoływanie metod 'get'.
-        for (int i = 1; i < series.size(); i++) {
+        for (int i = 0; i < series.size(); i++) {
 
-            HSSFRow row = sheet.createRow(i);
+            HSSFRow row = sheet.createRow(i + 1);
 
             for (int j = 0; j < columnsTitles.size(); j++) {
 
