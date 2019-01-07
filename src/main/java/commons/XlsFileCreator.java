@@ -42,50 +42,52 @@ public class XlsFileCreator<T> {
         headerCellStyle.setFont(headerFont);
 
         //kolekcja nazw kolumn w arkuszu
-        List<String> columnsTitles = new ArrayList<>();
+        List<String> columns = new ArrayList<>();
 
         //iteracja po klasie przekazanej do pola 'clazz'. Odczytuję wszystkie zadeklarowane pola.
         for (Field f : clazz.getDeclaredFields()) {
-            columnsTitles.add(f.getName());
+            columns.add(f.getName());
         }
 
         //zapisuję do struktury pliku excel odczytane powyżej pola klasy jako nagłówki kolumn.
         Row headerRow = sheet.createRow(0);
-        for (int i = 0; i < columnsTitles.size(); i++) {
+        for (int i = 0; i < columns.size(); i++) {
             Cell cell = headerRow.createCell(i);
-            cell.setCellValue(columnsTitles.get(i));
+            cell.setCellValue(columns.get(i));
             cell.setCellStyle(headerCellStyle);
         }
 
         // test odczytu metod zaczynających się na 'get'. Tylko test.
-        columnsTitles.forEach(t -> System.out.println("get" + t.substring(0, 1).toUpperCase() + t.substring(1)));
+        columns.forEach(t -> System.out.println("get" + t.substring(0, 1).toUpperCase() + t.substring(1)));
 
         //zapis danych i wywoływanie metod 'get'.
         for (int i = 0; i < series.size(); i++) {
 
+            //plus 1, ponieważ pierwszy wiersz, czyli index 0 w dokumencie zarezerwowany na nagłówki.
             HSSFRow row = sheet.createRow(i + 1);
 
-            for (int j = 0; j < columnsTitles.size(); j++) {
+            for (int j = 0; j < columns.size(); j++) {
 
                 HSSFCell cell = row.createCell(j);
                 Method method = series.get(i)
                         .getClass()
-                        .getMethod("get" + columnsTitles.get(j)
+                        .getMethod("get" + columns.get(j)
                                 .substring(0, 1)
-                                .toUpperCase() + columnsTitles.get(j)
+                                .toUpperCase() + columns.get(j)
                                 .substring(1));
 
+                //wywolywanie wszystkich dostępnych metod 'get' na obiekcie i zapis do arkusza.
                 Object result = method.invoke(series.get(i));
                 cell.setCellValue(String.valueOf(result));
             }
         }
 
-        //ustawianie auto szerokości kolumn.
-        for (int i = 0; i < columnsTitles.size(); i++) {
+        //stylizacja arkusza - ustawianie auto szerokości kolumn.
+        for (int i = 0; i < columns.size(); i++) {
             sheet.autoSizeColumn(i);
         }
 
-        //dodawanie unikalnej nazwy do nazwy pliku. Przykład: persons_12948573628.xls
+        //dodawanie unikalnej nazwy do pliku. Przykład: persons_12948573628.xls
         long mills = System.currentTimeMillis();
         String file = path + fileName + "_" + mills + ".xls";
 
